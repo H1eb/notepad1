@@ -3,83 +3,159 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import filedialog as fd
 from tkinter.filedialog import asksaveasfilename
+from tkinter import colorchooser
+from tkinter import messagebox
 
 root = Tk()
+
 
 def start_work(colorparam, frame_file_content):
     global file_content
     file_content = Text(frame_file_content, bg='white', fg='black', width='50', height='20', wrap=WORD, font='Times 10')
     return file_content
 
+
 def edit_click():
     messagebox.showinfo("About", "кря")
 
+
 def click_exit():
+    if fn == 'nullnemesorry':
+        MsgBox = tkinter.messagebox.askquestion('?????', 'Сохранить файл?',
+                                                icon='question')
+        if MsgBox == 'yes':
+            save_as()
     sys.exit()
 
+
 def open_file():
-    file_name = fd.askopenfilename()
+    file_name = fd.askopenfilename(defaultextension=".txt")
     f = open(file_name)
     insert_text(f)
     global fn
     fn = file_name
 
+
 def insert_text(text):
     file_content.delete(1.0, END)
     file_content.insert(1.0, text.read())
 
+
 def lighttheme():
     file_content.config(bg='white', fg='black')
+
+
 def darktheme():
     file_content.config(bg='black', fg='white')
+
 
 def strangetheme():
     file_content.config(bg='green', fg='yellow')
 
+
 def welldone():
     file_content.config(font='Times 20')
+
+
 def medium():
     file_content.config(font='Times 10')
+
+
 def rare():
     file_content.config(font='Times 5')
 
-def save_file():
 
-    file_name = asksaveasfilename()
+def white():
+    file_content.config(bg='white')
 
+
+def grey():
+    file_content.config(bg='grey')
+
+
+def pink():
+    file_content.config(bg='pink')
+
+
+def other():
+    clr = colorchooser.askcolor(title='Выберите цвет')
+    file_content.configure(background=clr[1])
+
+
+def save_as():
+    file_name = asksaveasfilename(defaultextension=".txt")
     if file_name:
         f = open(file_name, 'a')
         contents = file_content.get(1.0, 'end')
         f.write(contents)
         f.close()
+        global fn
+        fn = file_name
 
-def savejust():
+
+def save_open():
     file_name = fn
-    f = open(file_name, 'w')
-    contents = file_content.get(1.0, 'end')
-    f.write(contents)
-    f.close()
+    print(fn)
+    if fn == 'nullnemesorry':
+        save_as()
+    else:
+        f = open(file_name, 'w')
+        contents = file_content.get(1.0, 'end')
+        f.write(contents)
+        f.close()
 
+
+def create():
+    if fn == 'nullnemesorry':
+        MsgBox = tkinter.messagebox.askquestion('?????', 'Сохранить файл?',
+                                                icon='question')
+        if MsgBox == 'yes':
+            save_as()
+    file_content.delete(1.0, END)
+
+
+fn = 'nullnemesorry'
 main_menu = Menu()
 
 file_menu = Menu()
+
+file_menu.add_command(label="Create", command=create)
+
 file_menu.add_command(label="Open", command=open_file)
 
-file_menu.add_command(label="Save as...", command=save_file)
+file_menu.add_command(label="Save as...", command=save_as)
 
-file_menu.add_command(label="Save", command=savejust)
+file_menu.add_command(label="Save", command=save_open)
+
 file_menu.add_separator()
+
 file_menu.add_command(label="Exit", command=click_exit)
 
 file_view = Menu()
 
-file_view.add_command(label='light theme', command=lighttheme)
-file_view.add_command(label='dark theme', command=darktheme)
-file_view.add_command(label="break your eyes", command=strangetheme)
+theme = Menu()
+
+file_view.add_cascade(label='Theme', menu=theme)
+theme.add_radiobutton(label='Light theme', command=lighttheme)
+theme.add_radiobutton(label='Dark theme', command=darktheme)
+theme.add_radiobutton(label="Break your eyes", command=strangetheme)
+
+color_bg = Menu()
+
+file_view.add_cascade(label="Background", menu=color_bg)
+color_bg.add_radiobutton(label="White", command=white)
+color_bg.add_radiobutton(label="Grey", command=grey)
+color_bg.add_radiobutton(label="Pink", command=pink)
+color_bg.add_radiobutton(label="Other", command=other)
+
 file_view.add_separator()
-file_view.add_command(label="well done", command=welldone)
-file_view.add_command(label="medium", command=medium)
-file_view.add_command(label="rare", command=rare)
+
+size = Menu()
+
+file_view.add_cascade(label="Size", menu=size)
+size.add_command(label="Well done", command=welldone)
+size.add_command(label="Medium", command=medium)
+size.add_command(label="Rare", command=rare)
 
 main_menu.add_cascade(label="File", menu=file_menu)
 main_menu.add_cascade(label="View", menu=file_view)
